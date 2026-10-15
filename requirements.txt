@@ -1,0 +1,7 @@
+# Install the CUDA-enabled PyTorch build separately as described in README.md.
+transformers==4.51.3
+numpy==1.26.4
+matplotlib==3.9.2
+safetensors==0.5.3
+huggingface-hub==0.31.2
+tokenizers==0.21.1

@@ -1,0 +1,63 @@
+{
+  "model": "google-bert/bert-base-chinese",
+  "model_revision": "8f23c25b06e129b6c986331a13d8d025a92cf0ea",
+  "best_epoch": 3,
+  "selection_metric": "validation punctuation micro-F1 (all seven target labels, excluding NONE)",
+  "metrics": {
+    "characters": 170740,
+    "token_accuracy": 0.9719632189293663,
+    "always_none_accuracy": 0.9130725079067589,
+    "none_recall": 0.9937010096345046,
+    "punctuation_micro_precision": 0.7934009057580332,
+    "punctuation_micro_recall": 0.7436329335669047,
+    "punctuation_micro_f1": 0.7677111953535283,
+    "punctuation_macro_f1": 0.6182335013057781,
+    "sentence_boundary_precision": 0.7954028795150291,
+    "sentence_boundary_recall": 0.7860708936595108,
+    "sentence_boundary_f1": 0.7907093534212178,
+    "per_class": {
+      "，": {
+        "support": 8096,
+        "precision": 0.8211875843454791,
+        "recall": 0.7516057312252964,
+        "f1": 0.7848574745259899
+      },
+      "。": {
+        "support": 3827,
+        "precision": 0.820955981636511,
+        "recall": 0.7943558923438725,
+        "f1": 0.8074369189907039
+      },
+      "？": {
+        "support": 97,
+        "precision": 0.6446280991735537,
+        "recall": 0.8041237113402062,
+        "f1": 0.7155963302752294
+      },
+      "！": {
+        "support": 82,
+        "precision": 0.22962962962962963,
+        "recall": 0.3780487804878049,
+        "f1": 0.28571428571428575
+      },
+      "；": {
+        "support": 275,
+        "precision": 0.3373134328358209,
+        "recall": 0.4109090909090909,
+        "f1": 0.37049180327868847
+      },
+      "：": {
+        "support": 365,
+        "precision": 0.5979643765903307,
+        "recall": 0.6438356164383562,
+        "f1": 0.6200527704485488
+      },
+      "、": {
+        "support": 2100,
+        "precision": 0.8020948180815877,
+        "recall": 0.6928571428571428,
+        "f1": 0.7434849259070005
+      }
+    }
+  }
+}

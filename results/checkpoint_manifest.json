@@ -1,0 +1,29 @@
+{
+  "model_dir": "checkpoints/best_model",
+  "base_model": "google-bert/bert-base-chinese",
+  "base_model_revision": "8f23c25b06e129b6c986331a13d8d025a92cf0ea",
+  "best_epoch": 3,
+  "validation_punctuation_micro_f1": 0.77060412669825,
+  "files": {
+    "config.json": {
+      "bytes": 1165,
+      "sha256": "cc4819f444059fc554760eb6fa084a8664c6100dd26af15f101a7bfdd8cf1f7a"
+    },
+    "model.safetensors": {
+      "bytes": 406756136,
+      "sha256": "85693e35e4033b4efa3b70edcaa9ed8aa3042c40e7d1b1cf0b0f4aab0d20091c"
+    },
+    "special_tokens_map.json": {
+      "bytes": 132,
+      "sha256": "3c3507f36dff57bce437223db3b3081d1e2b52ec3e56ee55438193ecb2c94dd6"
+    },
+    "tokenizer_config.json": {
+      "bytes": 1331,
+      "sha256": "cbe004ed102fc7d706925907e6772aeca04fbe3d90d56a95a09ed75b3f30e7e9"
+    },
+    "vocab.txt": {
+      "bytes": 130668,
+      "sha256": "f7863b040bae29ac474065729355252248c92d41141c1e09fbf21dd3e593a238"
+    }
+  }
+}

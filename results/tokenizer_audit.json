@@ -1,0 +1,19 @@
+{
+  "characters": 1574260,
+  "unk_characters": 1506,
+  "unk_rate": 0.0009566399451170709,
+  "method": "direct WordPiece vocabulary lookup for each original Unicode character; [UNK] if absent",
+  "special_tokens": {
+    "cls": 101,
+    "sep": 102,
+    "pad": 0
+  },
+  "max_model_tokens": 256,
+  "content_window": 254,
+  "window_policy": "non-overlapping; every original character receives exactly one gold label and one evaluation prediction",
+  "window_counts": {
+    "train": 6063,
+    "validation": 753,
+    "test": 812
+  }
+}

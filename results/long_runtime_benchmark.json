@@ -1,0 +1,527 @@
+{
+  "model": "google-bert/bert-base-chinese",
+  "model_revision": "8f23c25b06e129b6c986331a13d8d025a92cf0ea",
+  "checkpoint": "checkpoints/best_model",
+  "batch_sizes": [
+    1,
+    4,
+    8,
+    16
+  ],
+  "batch_size_failures": {},
+  "warmup": "one short CUDA forward pass at the selected fixed window size; cuda synchronized before measurements",
+  "repetitions": 3,
+  "ordering": "batch sizes interleaved in forward/reverse/rotated order; serial baseline runs once per round between fixed methods",
+  "test_long_subset_minimum_chars": 800,
+  "test_long_article_count": 60,
+  "test_long_unique_character_positions": 96686,
+  "selected_fixed_window": {
+    "window_size_chars": 256,
+    "stride_chars": 128,
+    "merge": "arithmetic mean of class probabilities across all windows covering each global character position",
+    "window_plan_sha256": "95736a5492c5c1ada593e7dea4cdd11ce17b4456157abb1bfa268971c494586a"
+  },
+  "original_serial_policy": {
+    "input_max_tokens": 400,
+    "content_max_chars": 398,
+    "commit_policy": "when more than 398 chars remain, commit through the last predicted 。 among the first 300 chars, or commit 300 if none; final <=398-char remainder is retained",
+    "gold_labels_used_for_window_boundaries": false
+  },
+  "runtime_rows": [
+    {
+      "method": "fixed_forward_bs1",
+      "repetitions": 3,
+      "timing_mode": "pretokenized, presplit, pretransferred model GPU forward only",
+      "median_seconds": 16.18217434501648,
+      "chars_per_second": 5974.846021219377,
+      "median_model_gpu_seconds": 16.18217434501648,
+      "peak_allocated_mib": 418.11083984375,
+      "window_count": 723,
+      "input_tokens_nonpad": 186534,
+      "input_tokens_padded": 186534,
+      "raw_repetition_seconds": [
+        16.18217434501648,
+        8.396790135860444,
+        18.442754709243776
+      ],
+      "median_python_loop_wall_seconds": 16.434435700000904,
+      "padded_tokens_per_second": 11527.128309394693
+    },
+    {
+      "method": "fixed_e2e_bs1_e2e",
+      "repetitions": 3,
+      "timing_mode": "end-to-end",
+      "median_seconds": 14.112946999997803,
+      "chars_per_second": 6850.872464837787,
+      "median_model_gpu_seconds": 13.323698092937466,
+      "peak_allocated_mib": 418.11572265625,
+      "window_count": 723,
+      "input_tokens_nonpad": 186534,
+      "input_tokens_padded": 186534,
+      "raw_repetition_seconds": [
+        14.112946999997803,
+        11.012052500002028,
+        16.87376039999799
+      ],
+      "padded_tokens_per_second": 13217.225289659846
+    },
+    {
+      "method": "fixed_forward_bs4",
+      "repetitions": 3,
+      "timing_mode": "pretokenized, presplit, pretransferred model GPU forward only",
+      "median_seconds": 3.768748287200928,
+      "chars_per_second": 25654.671692550015,
+      "median_model_gpu_seconds": 3.768748287200928,
+      "peak_allocated_mib": 432.14404296875,
+      "window_count": 723,
+      "input_tokens_nonpad": 186534,
+      "input_tokens_padded": 186534,
+      "raw_repetition_seconds": [
+        3.768748287200928,
+        3.7668148441314697,
+        3.878678060531616
+      ],
+      "median_python_loop_wall_seconds": 3.8311745999999403,
+      "padded_tokens_per_second": 49494.94786730369
+    },
+    {
+      "method": "fixed_e2e_bs4_e2e",
+      "repetitions": 3,
+      "timing_mode": "end-to-end",
+      "median_seconds": 4.40044399999897,
+      "chars_per_second": 21971.873747290643,
+      "median_model_gpu_seconds": 3.8685197353363057,
+      "peak_allocated_mib": 432.16064453125,
+      "window_count": 723,
+      "input_tokens_nonpad": 186534,
+      "input_tokens_padded": 186534,
+      "raw_repetition_seconds": [
+        4.40044399999897,
+        4.530553799999325,
+        4.142898699999932
+      ],
+      "padded_tokens_per_second": 42389.81339156768
+    },
+    {
+      "method": "fixed_forward_bs8",
+      "repetitions": 3,
+      "timing_mode": "pretokenized, presplit, pretransferred model GPU forward only",
+      "median_seconds": 2.8879005393981934,
+      "chars_per_second": 33479.68487174711,
+      "median_model_gpu_seconds": 2.8879005393981934,
+      "peak_allocated_mib": 454.35498046875,
+      "window_count": 723,
+      "input_tokens_nonpad": 186534,
+      "input_tokens_padded": 186534,
+      "raw_repetition_seconds": [
+        2.8879005393981934,
+        2.9090709495544433,
+        2.8581880044937136
+      ],
+      "median_python_loop_wall_seconds": 2.9269807999990007,
+      "padded_tokens_per_second": 64591.55966599585
+    },
+    {
+      "method": "fixed_e2e_bs8_e2e",
+      "repetitions": 3,
+      "timing_mode": "end-to-end",
+      "median_seconds": 3.381782899999962,
+      "chars_per_second": 28590.244512739446,
+      "median_model_gpu_seconds": 2.846341279983522,
+      "peak_allocated_mib": 454.38720703125,
+      "window_count": 723,
+      "input_tokens_nonpad": 186534,
+      "input_tokens_padded": 186534,
+      "raw_repetition_seconds": [
+        3.393926199998532,
+        3.381782899999962,
+        3.24354989999847
+      ],
+      "padded_tokens_per_second": 55158.47868294623
+    },
+    {
+      "method": "fixed_forward_bs16",
+      "repetitions": 3,
+      "timing_mode": "pretokenized, presplit, pretransferred model GPU forward only",
+      "median_seconds": 2.7158729877471925,
+      "chars_per_second": 35600.33935173114,
+      "median_model_gpu_seconds": 2.7158729877471925,
+      "peak_allocated_mib": 499.75341796875,
+      "window_count": 723,
+      "input_tokens_nonpad": 186534,
+      "input_tokens_padded": 186534,
+      "raw_repetition_seconds": [
+        2.7079299221038817,
+        2.7158729877471925,
+        2.7170808029174807
+      ],
+      "median_python_loop_wall_seconds": 2.735131999997975,
+      "padded_tokens_per_second": 68682.88791175369
+    },
+    {
+      "method": "fixed_e2e_bs16_e2e",
+      "repetitions": 3,
+      "timing_mode": "end-to-end",
+      "median_seconds": 3.147905099998752,
+      "chars_per_second": 30714.394789105405,
+      "median_model_gpu_seconds": 2.693920621871949,
+      "peak_allocated_mib": 499.81689453125,
+      "window_count": 723,
+      "input_tokens_nonpad": 186534,
+      "input_tokens_padded": 186534,
+      "raw_repetition_seconds": [
+        3.147905099998752,
+        3.0912669000026654,
+        3.176455699998769
+      ],
+      "padded_tokens_per_second": 59256.551285511734
+    },
+    {
+      "method": "original_serial_e2e",
+      "repetitions": 3,
+      "timing_mode": "adaptive serial: split/tokenize/transfer/forward/commit/fuse",
+      "median_seconds": 8.566334600000118,
+      "chars_per_second": 11286.741005890508,
+      "median_model_gpu_seconds": 8.007026627540588,
+      "peak_allocated_mib": 423.01416015625,
+      "window_count": 363,
+      "input_tokens_nonpad": 137469,
+      "input_tokens_padded": 145200,
+      "raw_repetition_seconds": [
+        8.566334600000118,
+        12.849694500000624,
+        6.2048144999971555
+      ],
+      "padded_tokens_per_second": 16950.07337210456
+    }
+  ],
+  "test_long_subset_diagnostics": {
+    "selection_used_test": false,
+    "serial_metrics": {
+      "characters": 96686,
+      "token_accuracy": 0.9704093664025816,
+      "always_none_accuracy": 0.9098628550152038,
+      "none_recall": 0.9928726512146048,
+      "punctuation_micro_precision": 0.7893070271586896,
+      "punctuation_micro_recall": 0.7436603557085485,
+      "punctuation_micro_f1": 0.7658040883847336,
+      "punctuation_macro_f1": 0.6242301944446424,
+      "sentence_boundary_precision": 0.7755458515283843,
+      "sentence_boundary_recall": 0.7782646801051709,
+      "sentence_boundary_f1": 0.7769028871391076,
+      "per_class": {
+        "，": {
+          "support": 4922,
+          "precision": 0.8295784073165291,
+          "recall": 0.7555871596911824,
+          "f1": 0.790855927698033
+        },
+        "。": {
+          "support": 2158,
+          "precision": 0.7975575387505871,
+          "recall": 0.7868396663577386,
+          "f1": 0.7921623512946115
+        },
+        "？": {
+          "support": 69,
+          "precision": 0.717948717948718,
+          "recall": 0.8115942028985508,
+          "f1": 0.7619047619047619
+        },
+        "！": {
+          "support": 55,
+          "precision": 0.26506024096385544,
+          "recall": 0.4,
+          "f1": 0.3188405797101449
+        },
+        "；": {
+          "support": 162,
+          "precision": 0.3121951219512195,
+          "recall": 0.3950617283950617,
+          "f1": 0.34877384196185285
+        },
+        "：": {
+          "support": 197,
+          "precision": 0.5866666666666667,
+          "recall": 0.6700507614213198,
+          "f1": 0.6255924170616114
+        },
+        "、": {
+          "support": 1152,
+          "precision": 0.7837301587301587,
+          "recall": 0.6857638888888888,
+          "f1": 0.7314814814814814
+        }
+      }
+    },
+    "fixed_metrics_by_batch": {
+      "1": {
+        "characters": 96686,
+        "token_accuracy": 0.97052313675196,
+        "always_none_accuracy": 0.9098628550152038,
+        "none_recall": 0.9932932443646202,
+        "punctuation_micro_precision": 0.7948528506341583,
+        "punctuation_micro_recall": 0.7406769936890418,
+        "punctuation_micro_f1": 0.7668092183416488,
+        "punctuation_macro_f1": 0.6181741491568084,
+        "sentence_boundary_precision": 0.7912186379928315,
+        "sentence_boundary_recall": 0.7738825591586328,
+        "sentence_boundary_f1": 0.7824545857332743,
+        "per_class": {
+          "，": {
+            "support": 4922,
+            "precision": 0.8351003834874803,
+            "recall": 0.7521332791548151,
+            "f1": 0.7914484233030465
+          },
+          "。": {
+            "support": 2158,
+            "precision": 0.8173913043478261,
+            "recall": 0.7840593141797961,
+            "f1": 0.8003784295175025
+          },
+          "？": {
+            "support": 69,
+            "precision": 0.6829268292682927,
+            "recall": 0.8115942028985508,
+            "f1": 0.7417218543046358
+          },
+          "！": {
+            "support": 55,
+            "precision": 0.225,
+            "recall": 0.32727272727272727,
+            "f1": 0.26666666666666666
+          },
+          "；": {
+            "support": 162,
+            "precision": 0.3209302325581395,
+            "recall": 0.42592592592592593,
+            "f1": 0.3660477453580902
+          },
+          "：": {
+            "support": 197,
+            "precision": 0.5973451327433629,
+            "recall": 0.6852791878172588,
+            "f1": 0.6382978723404255
+          },
+          "、": {
+            "support": 1152,
+            "precision": 0.7714285714285715,
+            "recall": 0.6796875,
+            "f1": 0.7226580526072912
+          }
+        }
+      },
+      "4": {
+        "characters": 96686,
+        "token_accuracy": 0.9705334795109943,
+        "always_none_accuracy": 0.9098628550152038,
+        "none_recall": 0.9932818769821873,
+        "punctuation_micro_precision": 0.7949033608272805,
+        "punctuation_micro_recall": 0.7409064830751578,
+        "punctuation_micro_f1": 0.7669556954507661,
+        "punctuation_macro_f1": 0.6163965574194853,
+        "sentence_boundary_precision": 0.7914798206278026,
+        "sentence_boundary_recall": 0.773444347063979,
+        "sentence_boundary_f1": 0.7823581560283687,
+        "per_class": {
+          "，": {
+            "support": 4922,
+            "precision": 0.835023664638269,
+            "recall": 0.7527427874847623,
+            "f1": 0.7917512554760124
+          },
+          "。": {
+            "support": 2158,
+            "precision": 0.8177863702271628,
+            "recall": 0.7840593141797961,
+            "f1": 0.8005677785663591
+          },
+          "？": {
+            "support": 69,
+            "precision": 0.6829268292682927,
+            "recall": 0.8115942028985508,
+            "f1": 0.7417218543046358
+          },
+          "！": {
+            "support": 55,
+            "precision": 0.21518987341772153,
+            "recall": 0.3090909090909091,
+            "f1": 0.25373134328358204
+          },
+          "；": {
+            "support": 162,
+            "precision": 0.3209302325581395,
+            "recall": 0.42592592592592593,
+            "f1": 0.3660477453580902
+          },
+          "：": {
+            "support": 197,
+            "precision": 0.5973451327433629,
+            "recall": 0.6852791878172588,
+            "f1": 0.6382978723404255
+          },
+          "、": {
+            "support": 1152,
+            "precision": 0.7714285714285715,
+            "recall": 0.6796875,
+            "f1": 0.7226580526072912
+          }
+        }
+      },
+      "8": {
+        "characters": 96686,
+        "token_accuracy": 0.9705127939929256,
+        "always_none_accuracy": 0.9098628550152038,
+        "none_recall": 0.9932705095997545,
+        "punctuation_micro_precision": 0.794682422451994,
+        "punctuation_micro_recall": 0.7407917383820998,
+        "punctuation_micro_f1": 0.7667913771601639,
+        "punctuation_macro_f1": 0.6181684344853293,
+        "sentence_boundary_precision": 0.7912186379928315,
+        "sentence_boundary_recall": 0.7738825591586328,
+        "sentence_boundary_f1": 0.7824545857332743,
+        "per_class": {
+          "，": {
+            "support": 4922,
+            "precision": 0.834761045987376,
+            "recall": 0.7523364485981309,
+            "f1": 0.791408420602693
+          },
+          "。": {
+            "support": 2158,
+            "precision": 0.8173913043478261,
+            "recall": 0.7840593141797961,
+            "f1": 0.8003784295175025
+          },
+          "？": {
+            "support": 69,
+            "precision": 0.6829268292682927,
+            "recall": 0.8115942028985508,
+            "f1": 0.7417218543046358
+          },
+          "！": {
+            "support": 55,
+            "precision": 0.225,
+            "recall": 0.32727272727272727,
+            "f1": 0.26666666666666666
+          },
+          "；": {
+            "support": 162,
+            "precision": 0.3209302325581395,
+            "recall": 0.42592592592592593,
+            "f1": 0.3660477453580902
+          },
+          "：": {
+            "support": 197,
+            "precision": 0.5973451327433629,
+            "recall": 0.6852791878172588,
+            "f1": 0.6382978723404255
+          },
+          "、": {
+            "support": 1152,
+            "precision": 0.7714285714285715,
+            "recall": 0.6796875,
+            "f1": 0.7226580526072912
+          }
+        }
+      },
+      "16": {
+        "characters": 96686,
+        "token_accuracy": 0.9705438222700288,
+        "always_none_accuracy": 0.9098628550152038,
+        "none_recall": 0.9932932443646202,
+        "punctuation_micro_precision": 0.7950991257234331,
+        "punctuation_micro_recall": 0.7409064830751578,
+        "punctuation_micro_f1": 0.7670468044666191,
+        "punctuation_macro_f1": 0.6182651645883154,
+        "sentence_boundary_precision": 0.7919282511210762,
+        "sentence_boundary_recall": 0.7738825591586328,
+        "sentence_boundary_f1": 0.7828014184397163,
+        "per_class": {
+          "，": {
+            "support": 4922,
+            "precision": 0.8351747463359639,
+            "recall": 0.7525396180414465,
+            "f1": 0.7917067436144062
+          },
+          "。": {
+            "support": 2158,
+            "precision": 0.8181818181818182,
+            "recall": 0.7840593141797961,
+            "f1": 0.800757217226692
+          },
+          "？": {
+            "support": 69,
+            "precision": 0.6829268292682927,
+            "recall": 0.8115942028985508,
+            "f1": 0.7417218543046358
+          },
+          "！": {
+            "support": 55,
+            "precision": 0.225,
+            "recall": 0.32727272727272727,
+            "f1": 0.26666666666666666
+          },
+          "；": {
+            "support": 162,
+            "precision": 0.3209302325581395,
+            "recall": 0.42592592592592593,
+            "f1": 0.3660477453580902
+          },
+          "：": {
+            "support": 197,
+            "precision": 0.5973451327433629,
+            "recall": 0.6852791878172588,
+            "f1": 0.6382978723404255
+          },
+          "、": {
+            "support": 1152,
+            "precision": 0.7714285714285715,
+            "recall": 0.6796875,
+            "f1": 0.7226580526072912
+          }
+        }
+      }
+    },
+    "batch_prediction_agreement_vs_reference": {
+      "1": {
+        "positions_different_from_reference_batch": 0,
+        "agreement_with_reference_batch": 1.0
+      },
+      "4": {
+        "positions_different_from_reference_batch": 5,
+        "agreement_with_reference_batch": 0.999948286204828
+      },
+      "8": {
+        "positions_different_from_reference_batch": 5,
+        "agreement_with_reference_batch": 0.999948286204828
+      },
+      "16": {
+        "positions_different_from_reference_batch": 2,
+        "agreement_with_reference_batch": 0.9999793144819312
+      }
+    },
+    "model_only_vs_end_to_end_prediction_agreement": {
+      "1": {
+        "positions_different": 0,
+        "agreement": 1.0
+      },
+      "4": {
+        "positions_different": 0,
+        "agreement": 1.0
+      },
+      "8": {
+        "positions_different": 0,
+        "agreement": 1.0
+      },
+      "16": {
+        "positions_different": 0,
+        "agreement": 1.0
+      }
+    },
+    "reference_batch_size": 1,
+    "serial_vs_fixed_batch1_positions_different": 880,
+    "serial_vs_fixed_batch1_agreement": 0.990898372049728
+  }
+}

@@ -1,0 +1,287 @@
+{
+  "selection_split": "validation only",
+  "selection_metric": "punctuation micro-F1 excluding NONE; ties prefer fewer windows",
+  "minimum_text_length_chars": 800,
+  "long_validation_articles": 60,
+  "grid": [
+    {
+      "window_size_chars": 256,
+      "stride_chars": 128,
+      "validation_long_articles": 60,
+      "validation_long_chars": 82632,
+      "window_count": 615,
+      "punctuation_micro_f1": 0.755182625863771,
+      "punctuation_macro_f1": 0.6157308870473245,
+      "sentence_boundary_f1": 0.786642875350497,
+      "metrics": {
+        "characters": 82632,
+        "token_accuracy": 0.9693702197695808,
+        "always_none_accuracy": 0.9125157324039114,
+        "none_recall": 0.9912868188268371,
+        "punctuation_micro_precision": 0.7701711491442543,
+        "punctuation_micro_recall": 0.7407663577258266,
+        "punctuation_micro_f1": 0.755182625863771,
+        "punctuation_macro_f1": 0.6157308870473245,
+        "sentence_boundary_precision": 0.778899545683998,
+        "sentence_boundary_recall": 0.7945417095777549,
+        "sentence_boundary_f1": 0.786642875350497,
+        "per_class": {
+          "，": {
+            "support": 4166,
+            "precision": 0.8088197146562905,
+            "recall": 0.7484397503600576,
+            "f1": 0.777459169679591
+          },
+          "。": {
+            "support": 1878,
+            "precision": 0.795635976583289,
+            "recall": 0.7960596379126731,
+            "f1": 0.7958477508650519
+          },
+          "？": {
+            "support": 39,
+            "precision": 0.5396825396825397,
+            "recall": 0.8717948717948718,
+            "f1": 0.6666666666666666
+          },
+          "！": {
+            "support": 25,
+            "precision": 0.358974358974359,
+            "recall": 0.56,
+            "f1": 0.4375
+          },
+          "；": {
+            "support": 161,
+            "precision": 0.33557046979865773,
+            "recall": 0.3105590062111801,
+            "f1": 0.3225806451612903
+          },
+          "：": {
+            "support": 160,
+            "precision": 0.6045197740112994,
+            "recall": 0.66875,
+            "f1": 0.6350148367952522
+          },
+          "、": {
+            "support": 800,
+            "precision": 0.6788874841972187,
+            "recall": 0.67125,
+            "f1": 0.6750471401634192
+          }
+        }
+      },
+      "validation_end_to_end_seconds_single_run": 3.103032399998483
+    },
+    {
+      "window_size_chars": 400,
+      "stride_chars": 300,
+      "validation_long_articles": 60,
+      "validation_long_chars": 82632,
+      "window_count": 283,
+      "punctuation_micro_f1": 0.7538949594642227,
+      "punctuation_macro_f1": 0.6065451522812804,
+      "sentence_boundary_f1": 0.7892700541655918,
+      "metrics": {
+        "characters": 82632,
+        "token_accuracy": 0.9692370994287928,
+        "always_none_accuracy": 0.9125157324039114,
+        "none_recall": 0.9912470326114345,
+        "punctuation_micro_precision": 0.768688901667625,
+        "punctuation_micro_recall": 0.7396597039701204,
+        "punctuation_micro_f1": 0.7538949594642227,
+        "punctuation_macro_f1": 0.6065451522812804,
+        "sentence_boundary_precision": 0.7906976744186046,
+        "sentence_boundary_recall": 0.787847579814624,
+        "sentence_boundary_f1": 0.7892700541655918,
+        "per_class": {
+          "，": {
+            "support": 4166,
+            "precision": 0.8025006379178362,
+            "recall": 0.7549207873259721,
+            "f1": 0.7779839208410637
+          },
+          "。": {
+            "support": 1878,
+            "precision": 0.8060836501901141,
+            "recall": 0.7902023429179978,
+            "f1": 0.7980639956977682
+          },
+          "？": {
+            "support": 39,
+            "precision": 0.5483870967741935,
+            "recall": 0.8717948717948718,
+            "f1": 0.6732673267326732
+          },
+          "！": {
+            "support": 25,
+            "precision": 0.375,
+            "recall": 0.48,
+            "f1": 0.42105263157894735
+          },
+          "；": {
+            "support": 161,
+            "precision": 0.3082191780821918,
+            "recall": 0.2795031055900621,
+            "f1": 0.29315960912052114
+          },
+          "：": {
+            "support": 160,
+            "precision": 0.5783783783783784,
+            "recall": 0.66875,
+            "f1": 0.6202898550724637
+          },
+          "、": {
+            "support": 800,
+            "precision": 0.6744487678339819,
+            "recall": 0.65,
+            "f1": 0.6619987269255251
+          }
+        }
+      },
+      "validation_end_to_end_seconds_single_run": 1.8997980000021926
+    },
+    {
+      "window_size_chars": 256,
+      "stride_chars": 256,
+      "validation_long_articles": 60,
+      "validation_long_chars": 82632,
+      "window_count": 355,
+      "punctuation_micro_f1": 0.7501407657657657,
+      "punctuation_macro_f1": 0.6111186604082836,
+      "sentence_boundary_f1": 0.7769270035732516,
+      "metrics": {
+        "characters": 82632,
+        "token_accuracy": 0.9689103495014039,
+        "always_none_accuracy": 0.9125157324039114,
+        "none_recall": 0.9911276739652268,
+        "punctuation_micro_precision": 0.763576443616564,
+        "punctuation_micro_recall": 0.7371697330197814,
+        "punctuation_micro_f1": 0.7501407657657657,
+        "punctuation_macro_f1": 0.6111186604082836,
+        "sentence_boundary_precision": 0.770242914979757,
+        "sentence_boundary_recall": 0.7837281153450052,
+        "sentence_boundary_f1": 0.7769270035732516,
+        "per_class": {
+          "，": {
+            "support": 4166,
+            "precision": 0.8049222797927461,
+            "recall": 0.7457993278924628,
+            "f1": 0.7742337403438823
+          },
+          "。": {
+            "support": 1878,
+            "precision": 0.7868589743589743,
+            "recall": 0.7843450479233227,
+            "f1": 0.7856
+          },
+          "？": {
+            "support": 39,
+            "precision": 0.546875,
+            "recall": 0.8974358974358975,
+            "f1": 0.6796116504854369
+          },
+          "！": {
+            "support": 25,
+            "precision": 0.35,
+            "recall": 0.56,
+            "f1": 0.4307692307692308
+          },
+          "；": {
+            "support": 161,
+            "precision": 0.31756756756756754,
+            "recall": 0.2919254658385093,
+            "f1": 0.3042071197411003
+          },
+          "：": {
+            "support": 160,
+            "precision": 0.6,
+            "recall": 0.65625,
+            "f1": 0.626865671641791
+          },
+          "、": {
+            "support": 800,
+            "precision": 0.6682926829268293,
+            "recall": 0.685,
+            "f1": 0.6765432098765433
+          }
+        }
+      },
+      "validation_end_to_end_seconds_single_run": 1.6500659999983327
+    },
+    {
+      "window_size_chars": 400,
+      "stride_chars": 400,
+      "validation_long_articles": 60,
+      "validation_long_chars": 82632,
+      "window_count": 241,
+      "punctuation_micro_f1": 0.7479399957743502,
+      "punctuation_macro_f1": 0.614757041570864,
+      "sentence_boundary_f1": 0.7770635124710722,
+      "metrics": {
+        "characters": 82632,
+        "token_accuracy": 0.9682447477974635,
+        "always_none_accuracy": 0.9125157324039114,
+        "none_recall": 0.990650239380396,
+        "punctuation_micro_precision": 0.7618364418938307,
+        "punctuation_micro_recall": 0.7345414303499792,
+        "punctuation_micro_f1": 0.7479399957743502,
+        "punctuation_macro_f1": 0.614757041570864,
+        "sentence_boundary_precision": 0.7760657421674371,
+        "sentence_boundary_recall": 0.778063851699279,
+        "sentence_boundary_f1": 0.7770635124710722,
+        "per_class": {
+          "，": {
+            "support": 4166,
+            "precision": 0.7991311014566829,
+            "recall": 0.7506000960153625,
+            "f1": 0.7741057061517514
+          },
+          "。": {
+            "support": 1878,
+            "precision": 0.7886792452830189,
+            "recall": 0.7790202342917998,
+            "f1": 0.7838199839271364
+          },
+          "？": {
+            "support": 39,
+            "precision": 0.5964912280701754,
+            "recall": 0.8717948717948718,
+            "f1": 0.7083333333333334
+          },
+          "！": {
+            "support": 25,
+            "precision": 0.4,
+            "recall": 0.56,
+            "f1": 0.4666666666666667
+          },
+          "；": {
+            "support": 161,
+            "precision": 0.2967741935483871,
+            "recall": 0.2857142857142857,
+            "f1": 0.2911392405063291
+          },
+          "：": {
+            "support": 160,
+            "precision": 0.5833333333333334,
+            "recall": 0.65625,
+            "f1": 0.6176470588235293
+          },
+          "、": {
+            "support": 800,
+            "precision": 0.672258064516129,
+            "recall": 0.65125,
+            "f1": 0.6615873015873016
+          }
+        }
+      },
+      "validation_end_to_end_seconds_single_run": 1.8007434999999532
+    }
+  ],
+  "selected": {
+    "window_size_chars": 256,
+    "stride_chars": 128,
+    "punctuation_micro_f1": 0.755182625863771,
+    "punctuation_macro_f1": 0.6157308870473245,
+    "sentence_boundary_f1": 0.786642875350497
+  }
+}

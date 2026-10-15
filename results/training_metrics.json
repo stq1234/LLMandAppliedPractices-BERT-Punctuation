@@ -1,0 +1,222 @@
+{
+  "model": "google-bert/bert-base-chinese",
+  "model_revision": "8f23c25b06e129b6c986331a13d8d025a92cf0ea",
+  "seed": 20261015,
+  "epochs_requested": 3,
+  "max_model_tokens": 256,
+  "content_window": 254,
+  "batch_size": 8,
+  "gradient_accumulation": 1,
+  "learning_rate": 2e-05,
+  "class_weights": [
+    1.0,
+    0.5,
+    0.5,
+    2.07381272315979,
+    2.2114827632904053,
+    1.0922529697418213,
+    1.0,
+    0.5
+  ],
+  "selection_metric": "validation punctuation micro-F1 (all seven target labels, excluding NONE)",
+  "best_epoch": 3,
+  "best_validation_punctuation_micro_f1": 0.77060412669825,
+  "total_train_minutes": 6.2591564383332905,
+  "epochs": [
+    {
+      "epoch": 1,
+      "train_loss": 0.15069479640268557,
+      "updates": 757,
+      "amp_skipped_updates": 1,
+      "train_seconds": 131.51704750000135,
+      "validation": {
+        "characters": 154425,
+        "token_accuracy": 0.969635745507528,
+        "always_none_accuracy": 0.9155641897361179,
+        "none_recall": 0.9933868982784717,
+        "punctuation_micro_precision": 0.7865311308767471,
+        "punctuation_micro_recall": 0.7120944857734489,
+        "punctuation_micro_f1": 0.7474641764611174,
+        "punctuation_macro_f1": 0.5873783552738755,
+        "sentence_boundary_precision": 0.7706150953532098,
+        "sentence_boundary_recall": 0.8197142857142857,
+        "sentence_boundary_f1": 0.7944067561954866,
+        "per_class": {
+          "，": {
+            "support": 7106,
+            "precision": 0.8444558521560575,
+            "recall": 0.6944835350408106,
+            "f1": 0.7621621621621623
+          },
+          "。": {
+            "support": 3379,
+            "precision": 0.7802228412256268,
+            "recall": 0.8289434744007103,
+            "f1": 0.8038456019514993
+          },
+          "？": {
+            "support": 63,
+            "precision": 0.5268817204301075,
+            "recall": 0.7777777777777778,
+            "f1": 0.6282051282051282
+          },
+          "！": {
+            "support": 58,
+            "precision": 0.475,
+            "recall": 0.3275862068965517,
+            "f1": 0.3877551020408163
+          },
+          "；": {
+            "support": 238,
+            "precision": 0.2538860103626943,
+            "recall": 0.20588235294117646,
+            "f1": 0.2273781902552204
+          },
+          "：": {
+            "support": 282,
+            "precision": 0.6472868217054264,
+            "recall": 0.5921985815602837,
+            "f1": 0.6185185185185186
+          },
+          "、": {
+            "support": 1913,
+            "precision": 0.7078903189703414,
+            "recall": 0.6612650287506534,
+            "f1": 0.6837837837837838
+          }
+        }
+      },
+      "peak_allocated_mib": 2206.22412109375
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.05052217578707081,
+      "updates": 758,
+      "amp_skipped_updates": 0,
+      "train_seconds": 123.19490959999894,
+      "validation": {
+        "characters": 154425,
+        "token_accuracy": 0.9721159138740489,
+        "always_none_accuracy": 0.9155641897361179,
+        "none_recall": 0.992651323327628,
+        "punctuation_micro_precision": 0.7900396151669496,
+        "punctuation_micro_recall": 0.7494439757650126,
+        "punctuation_micro_f1": 0.769206549118388,
+        "punctuation_macro_f1": 0.5946802846446865,
+        "sentence_boundary_precision": 0.7834623893805309,
+        "sentence_boundary_recall": 0.8094285714285714,
+        "sentence_boundary_f1": 0.7962338392355256,
+        "per_class": {
+          "，": {
+            "support": 7106,
+            "precision": 0.8121637776449492,
+            "recall": 0.7648466084998593,
+            "f1": 0.7877953326569068
+          },
+          "。": {
+            "support": 3379,
+            "precision": 0.8006384213580964,
+            "recall": 0.8165137614678899,
+            "f1": 0.8084981684981685
+          },
+          "？": {
+            "support": 63,
+            "precision": 0.52,
+            "recall": 0.8253968253968254,
+            "f1": 0.6380368098159509
+          },
+          "！": {
+            "support": 58,
+            "precision": 0.3142857142857143,
+            "recall": 0.3793103448275862,
+            "f1": 0.34375
+          },
+          "；": {
+            "support": 238,
+            "precision": 0.3233082706766917,
+            "recall": 0.18067226890756302,
+            "f1": 0.23180592991913748
+          },
+          "：": {
+            "support": 282,
+            "precision": 0.5764705882352941,
+            "recall": 0.6950354609929078,
+            "f1": 0.630225080385852
+          },
+          "、": {
+            "support": 1913,
+            "precision": 0.7965994962216625,
+            "recall": 0.6612650287506534,
+            "f1": 0.7226506712367895
+          }
+        }
+      },
+      "peak_allocated_mib": 2206.22412109375
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.04112077300439252,
+      "updates": 758,
+      "amp_skipped_updates": 0,
+      "train_seconds": 110.28137969999807,
+      "validation": {
+        "characters": 154425,
+        "token_accuracy": 0.9723166585721223,
+        "always_none_accuracy": 0.9155641897361179,
+        "none_recall": 0.9923825555571273,
+        "punctuation_micro_precision": 0.7871540553511438,
+        "punctuation_micro_recall": 0.7547357926221336,
+        "punctuation_micro_f1": 0.77060412669825,
+        "punctuation_macro_f1": 0.6200767441215534,
+        "sentence_boundary_precision": 0.7908606672273619,
+        "sentence_boundary_recall": 0.806,
+        "sentence_boundary_f1": 0.7983585679920758,
+        "per_class": {
+          "，": {
+            "support": 7106,
+            "precision": 0.8158648770924446,
+            "recall": 0.7613284548269068,
+            "f1": 0.7876537817572977
+          },
+          "。": {
+            "support": 3379,
+            "precision": 0.8054006457293806,
+            "recall": 0.8120745782775969,
+            "f1": 0.8087238432066017
+          },
+          "？": {
+            "support": 63,
+            "precision": 0.5714285714285714,
+            "recall": 0.8253968253968254,
+            "f1": 0.6753246753246753
+          },
+          "！": {
+            "support": 58,
+            "precision": 0.36231884057971014,
+            "recall": 0.43103448275862066,
+            "f1": 0.3937007874015748
+          },
+          "；": {
+            "support": 238,
+            "precision": 0.28512396694214875,
+            "recall": 0.28991596638655465,
+            "f1": 0.2875
+          },
+          "：": {
+            "support": 282,
+            "precision": 0.6225806451612903,
+            "recall": 0.6843971631205674,
+            "f1": 0.652027027027027
+          },
+          "、": {
+            "support": 1913,
+            "precision": 0.769406392694064,
+            "recall": 0.7046523784631469,
+            "f1": 0.7356070941336971
+          }
+        }
+      },
+      "peak_allocated_mib": 2206.22412109375
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "purpose": "qualitative_cross_domain_example_only",
+  "source": {
+    "title": "论语/学而第一",
+    "sections": [
+      "一之一",
+      "一之二",
+      "一之三"
+    ],
+    "url": "https://zh.wikisource.org/zh-hans/%E8%AB%96%E8%AA%9E/%E5%AD%B8%E8%80%8C%E7%AC%AC%E4%B8%80",
+    "source_page_public_domain_note": "The page identifies the work as public domain."
+  },
+  "source_punctuated_sections": [
+    "子曰：“学而时习之，不亦说乎？有朋自远方来，不亦乐乎？人不知而不愠，不亦君子乎？”",
+    "有子曰：“其为人也孝弟，而好犯上者，鲜矣；不好犯上，而好作乱者，未之有也。君子务本，本立而道生；孝弟也者，其为仁之本与？”",
+    "子曰：“巧言令色，鲜矣仁。”"
+  ],
+  "input_text_file": "data/analects_xueer_first_three_punctuation_free.txt",
+  "output_text_file": "results/analects_qualitative_output.txt",
+  "input_text": "子曰学而时习之不亦说乎有朋自远方来不亦乐乎人不知而不愠不亦君子乎有子曰其为人也孝弟而好犯上者鲜矣不好犯上而好作乱者未之有也君子务本本立而道生孝弟也者其为仁之本与子曰巧言令色鲜矣仁",
+  "model_output_text": "子曰：学而时习之，不亦说乎？有朋自远方来，不亦乐乎？人不知而不愠，不亦君子乎？有子曰：其为人也！孝弟而好犯上者鲜矣！不好犯上而好作乱者未之有也！君子务本本立而道生孝弟也者，其为仁之本？与？子曰巧言令色鲜矣！仁！",
+  "inference": {
+    "model": "google-bert/bert-base-chinese",
+    "revision": "8f23c25b06e129b6c986331a13d8d025a92cf0ea",
+    "checkpoint_sha256": "85693e35e4033b4efa3b70edcaa9ed8aa3042c40e7d1b1cf0b0f4aab0d20091c",
+    "device": "cpu",
+    "batch_size": 4,
+    "window_size_chars": 256,
+    "stride_chars": 128,
+    "input_characters": 89,
+    "window_count": 1,
+    "unknown_characters": 1,
+    "original_characters_preserved_exactly": true,
+    "inserted_target_marks": 16,
+    "output_sha256": "4252fc82704481e14159fbbe6f10e04097e1d3b47348a1876ec902753ccd391e"
+  },
+  "evaluation": "qualitative only; no gold labels, F1 score, or cross-domain metric"
+}

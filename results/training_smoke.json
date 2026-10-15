@@ -1,0 +1,12 @@
+{
+  "batch_size": 8,
+  "sequence_length": 256,
+  "optimizer_step_seconds_median_after_warmup": 0.09948360000089451,
+  "peak_allocated_mib": 2001.05126953125,
+  "windows_per_epoch": 6063,
+  "estimated_steps_per_epoch": 758,
+  "estimated_three_epoch_train_minutes": 3.770428440033902,
+  "model": "google-bert/bert-base-chinese",
+  "model_revision": "8f23c25b06e129b6c986331a13d8d025a92cf0ea",
+  "gpu_name": "NVIDIA GeForce RTX 3060 Laptop GPU"
+}
