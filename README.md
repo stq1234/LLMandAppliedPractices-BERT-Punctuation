@@ -54,10 +54,10 @@ python src/punctuate.py --input data/analects_xueer_first_three_punctuation_free
 - `src/train.py`：预训练编码器微调、验证集模型选择、完整测试评估和逐字预测输出。
 - `src/benchmark_long.py`：长文窗口参数验证选择、串行基线与固定窗口批处理计时。
 - `src/punctuate.py`：从 UTF-8 文件加载本地最佳 checkpoint，以固定 256/128 窗口与可配置 batch size 输出恢复文本。
-- `src/plot_results.py`：由已记录 JSON 生成报告图。
+- `src/plot_results.py`：由已记录指标与混淆矩阵生成训练、逐类 F1、混淆矩阵和长文吞吐图。
 - `data/`：原始 1 月文本和冻结后的三个数据划分。
 - `results/`：数据、模型、指标、错误样例及长文基准的审计材料。
-- `figures/`：报告使用的训练、分类和长文速度图。
+- `figures/`：报告使用的训练、逐类 F1、逐类混淆和长文吞吐图。
 - `report.md`：实验过程、量化结果、误差分析与适用范围。
 - `results/analects_qualitative_inference.json`：公开领域古文来源、原始输入、模型输出与定性推理配置；不包含 gold F1。
 

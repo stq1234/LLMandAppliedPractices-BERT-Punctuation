@@ -1,7 +1,8 @@
-"""Regenerate the compact report figures from recorded experiment JSON."""
+"""Regenerate report figures from the recorded experiment results."""
 
 from __future__ import annotations
 
+import csv
 import json
 from pathlib import Path
 
@@ -13,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 RESULTS = ROOT / "results"
 FIGURES = ROOT / "figures"
 FIGURES.mkdir(exist_ok=True)
+LABELS = ["NONE", "，", "。", "？", "！", "；", "：", "、"]
 plt.rcParams.update(
     {
         "font.sans-serif": ["Microsoft YaHei", "SimHei", "Arial Unicode MS", "DejaVu Sans"],
@@ -51,68 +53,133 @@ def plot_training() -> None:
 def plot_test_classes() -> None:
     data = read_json("test_metrics.json")["metrics"]["per_class"]
     punctuation_names = {
-        "，": "逗号（，）",
-        "。": "句号（。）",
-        "？": "问号（？）",
-        "！": "叹号（！）",
-        "；": "分号（；）",
-        "：": "冒号（：）",
-        "、": "顿号（、）",
+        "，": "逗号",
+        "。": "句号",
+        "？": "问号",
+        "！": "叹号",
+        "；": "分号",
+        "：": "冒号",
+        "、": "顿号",
     }
-    labels = [punctuation_names[label] for label in data]
+    labels = [
+        f"{punctuation_names[label]}（n={data[label]['support']:,}）"
+        for label in data
+    ]
     f1 = [data[label]["f1"] for label in data]
-    support = [data[label]["support"] for label in data]
     y = np.arange(len(labels))
-    fig, ax_f1 = plt.subplots(figsize=(7.8, 4.7))
-    bars = ax_f1.barh(y, f1, color="#54A24B", alpha=0.9)
-    ax_f1.set_yticks(y, labels)
-    ax_f1.invert_yaxis()
-    ax_f1.set_xlim(0, 1.05)
-    ax_f1.set_xlabel("F1")
-    ax_f1.set_title("测试集各标点类别 F1 与真实支持数")
-    ax_f1.grid(axis="x", alpha=0.22)
+    fig, ax = plt.subplots(figsize=(8.3, 4.8))
+    bars = ax.barh(y, f1, color="#54A24B", alpha=0.92)
+    ax.set_yticks(y, labels)
+    ax.invert_yaxis()
+    ax.set_xlim(0, 1.05)
+    ax.set_xlabel("F1")
+    ax.set_title("测试集标点类别 F1（括号内为真实支持数）")
+    ax.grid(axis="x", alpha=0.22)
     for bar, value in zip(bars, f1):
-        ax_f1.text(value + 0.015, bar.get_y() + bar.get_height() / 2, f"{value:.3f}", va="center", fontsize=8)
-    ax_support = ax_f1.twiny()
-    ax_support.plot(support, y, marker="|", markersize=11, linewidth=0, color="#4C78A8")
-    ax_support.set_xlabel("真实支持数（蓝色刻度）")
-    ax_support.set_xlim(0, max(support) * 1.18)
+        ax.text(
+            value + 0.015,
+            bar.get_y() + bar.get_height() / 2,
+            f"{value:.3f}",
+            va="center",
+            fontsize=8,
+        )
     fig.tight_layout()
     fig.savefig(FIGURES / "test_per_class.png", bbox_inches="tight")
     plt.close(fig)
 
 
+def plot_test_confusion() -> None:
+    with (RESULTS / "test_confusion_matrix.csv").open(
+        "r", encoding="utf-8-sig", newline=""
+    ) as handle:
+        rows = list(csv.reader(handle))
+    matrix = np.asarray([[int(value) for value in row[1:]] for row in rows[1:]], dtype=np.int64)
+    row_totals = matrix.sum(axis=1, keepdims=True)
+    normalized = matrix / np.maximum(row_totals, 1)
+    fig, ax = plt.subplots(figsize=(8.0, 7.0))
+    image = ax.imshow(normalized, cmap="Blues", vmin=0.0, vmax=1.0, aspect="equal")
+    ax.set_xticks(np.arange(len(LABELS)), LABELS)
+    ax.set_yticks(np.arange(len(LABELS)), LABELS)
+    ax.set_xlabel("模型预测类别")
+    ax.set_ylabel("真实类别")
+    ax.set_title("测试集逐字混淆矩阵（按真实类别归一化）")
+    threshold = 0.48
+    for i in range(len(LABELS)):
+        for j in range(len(LABELS)):
+            fraction = normalized[i, j]
+            ax.text(
+                j,
+                i,
+                f"{fraction:.1%}",
+                ha="center",
+                va="center",
+                fontsize=8,
+                color="white" if fraction > threshold else "#222222",
+            )
+    colorbar = fig.colorbar(image, ax=ax, fraction=0.046, pad=0.04)
+    colorbar.set_label("真实类别内的比例")
+    fig.tight_layout()
+    fig.savefig(FIGURES / "test_confusion_matrix.png", bbox_inches="tight")
+    plt.close(fig)
+
+
 def plot_long_runtime() -> None:
     data = read_json("long_runtime_benchmark.json")
-    rows = data["runtime_rows"]
-    fig, ax = plt.subplots(figsize=(9.5, 4.8))
+    rows = [
+        row
+        for row in data["runtime_rows"]
+        if row["method"].startswith("fixed_e2e_") or row["method"] == "original_serial_e2e"
+    ]
     labels = []
-    values = []
+    medians = []
+    lower_errors = []
+    upper_errors = []
+    label_positions = []
     colors = []
     for row in rows:
         method = row["method"]
-        if method.startswith("fixed_forward_"):
-            batch = method.split("bs", 1)[1]
-            labels.append(f"固定窗 forward B{batch}")
-            colors.append("#4C78A8")
-        elif method.startswith("fixed_e2e_"):
+        times = [float(value) for value in row["raw_repetition_seconds"]]
+        unique_chars = int(data["test_long_unique_character_positions"])
+        rates = [unique_chars / value for value in times]
+        median_rate = float(row["chars_per_second"])
+        if method.startswith("fixed_e2e_"):
             batch = method.split("bs", 1)[1].split("_", 1)[0]
-            labels.append(f"固定窗端到端 B{batch}")
+            labels.append(f"固定窗 batch {batch}")
             colors.append("#F58518")
         else:
-            labels.append("原串行端到端")
-            colors.append("#E45756")
-        values.append(float(row["chars_per_second"]))
-    y = np.arange(len(values))
-    bars = ax.barh(y, values, color=colors)
+            labels.append("原串行自适应窗口")
+            colors.append("#4C78A8")
+        medians.append(median_rate)
+        lower_errors.append(median_rate - min(rates))
+        upper_errors.append(max(rates) - median_rate)
+        label_positions.append(max(rates) * 1.02)
+
+    y = np.arange(len(medians))
+    fig, ax = plt.subplots(figsize=(8.8, 4.6))
+    bars = ax.barh(
+        y,
+        medians,
+        color=colors,
+        xerr=np.asarray([lower_errors, upper_errors]),
+        capsize=3,
+        error_kw={"elinewidth": 1.2, "ecolor": "#444444"},
+    )
     ax.set_yticks(y, labels)
     ax.invert_yaxis()
-    ax.set_xlabel("唯一字符位置 / 秒（中位数）")
-    ax.set_title("长文测试子集吞吐率：模型前向与端到端流程")
-    ax.set_xlim(0, max(values) * 1.12)
+    ax.set_xlabel("唯一字符位置 / 秒（中位数；误差线为三次实测范围）")
+    ax.set_title("长文测试子集端到端吞吐率")
+    ax.set_xlim(0, max(label_positions) * 1.08)
     ax.grid(axis="x", alpha=0.22)
-    for bar, value in zip(bars, values):
-        ax.text(value * 1.01, bar.get_y() + bar.get_height() / 2, f"{value:,.0f}", va="center", fontsize=8)
+    for bar, value, label_x in zip(bars, medians, label_positions):
+        ax.text(
+            label_x,
+            bar.get_y() + bar.get_height() / 2,
+            f"{value:,.0f}",
+            va="center",
+            ha="left",
+            color="#222222",
+            fontsize=8,
+        )
     fig.tight_layout()
     fig.savefig(FIGURES / "long_text_runtime.png", bbox_inches="tight")
     plt.close(fig)
@@ -121,8 +188,12 @@ def plot_long_runtime() -> None:
 def main() -> None:
     plot_training()
     plot_test_classes()
+    plot_test_confusion()
     plot_long_runtime()
-    print("Wrote training_validation.png, test_per_class.png, and long_text_runtime.png")
+    print(
+        "Wrote training_validation.png, test_per_class.png, "
+        "test_confusion_matrix.png, and long_text_runtime.png"
+    )
 
 
 if __name__ == "__main__":
