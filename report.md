@@ -28,19 +28,91 @@
 
 ## 3. 方法
 
-### 3.1 逐字符分类器
+### 3.1 预训练编码器与上下文表征
 
-模型采用 google-bert/bert-base-chinese，并在预训练编码器上添加八分类 token-classification 头，标签包括 NONE 和七类标点［3］。使用词表对 Unicode 字符逐字查表；缺少词条的字符映射为 [UNK]。全语料中 [UNK] 字符占 0.0957%。模型序列包含 [CLS] 和 [SEP]；训练与常规测试的最长序列为 256 token，因此每个非重叠窗口最多监督 254 个正文字符，每个原始字符在一个窗口内获得一次标签。
+语言模型通过文本序列学习上下文与词元之间的概率关系。自回归语言模型通常根据左侧上下文预测后续词元；BERT 则采用掩码语言建模（masked language modeling, MLM），在输入中遮蔽一部分位置，并利用每层的左右上下文重建原词元。原始 BERT 还结合下一句预测任务进行预训练［1］。这些目标用于获得可迁移的预训练参数，并非本实验的微调目标。加载的 google-bert/bert-base-chinese 检查点提供编码器初始化；本实验用未遮蔽的新闻字符序列和标点标签微调该编码器，不训练 MLM 或下一句预测头。其 MLM 目标可表示为
 
-编码器和分类头联合微调。训练目标为加权交叉熵：NONE 权重为 1；七类标点的权重根据训练集频数按中位数与本类频数之比的平方根计算，再裁剪到 0.5 至 4.0。频数权重只由训练集估计，使低频类别在训练损失中获得较大权重。
+$$
+\mathcal{L}_{\mathrm{MLM}}(\theta)=-\sum_{i\in\mathcal{M}}\log p_{\theta}(x_i\mid\widetilde{\mathbf{x}}).
+$$
 
-### 3.2 长文本滑窗与概率融合
+其中，\(\mathbf{x}\) 是原始词元序列，\(x_i\) 是第 \(i\) 个原始词元，\(\widetilde{\mathbf{x}}\) 是经掩码扰动后的输入序列，\(\mathcal{M}\) 是被选作预测目标的位置集合，\(\theta\) 表示预训练模型参数，\(p_{\theta}\) 是模型对原词元的条件概率。该目标只说明预训练背景，与下文基于标点类别的监督损失相区别。
 
-长文本固定窗口以字符位置规划；本实验将窗口候选限制在 (256, 128)、(400, 300)、(256, 256) 和 (400, 400)，其中前一数值为窗口字符数，后一数值为步长。窗口覆盖同一字符时，先对模型 softmax 概率取算术平均，再选概率最高的类别：
+Transformer 编码器需要同时表示词元内容、顺序和片段归属。对位置 \(i\)，BERT 将词元嵌入、可学习的绝对位置嵌入和句段嵌入相加，并经层归一化与训练期随机失活形成初始隐状态：
 
-对字符位置 i 和类别 c，计算平均概率 pᵢ(c) = (1 / |Wᵢ|) Σ_{w∈Wᵢ} P(c | xᵢ, w)，并选择 ŷᵢ = arg max_c pᵢ(c)。其中 Wᵢ 是覆盖该位置的窗口集合，xᵢ 是该位置的输入字符。该做法融合不同窗口上下文下的预测分布，而不是对离散标签投票。根据验证集标点 micro-F1 选出 256 字窗口、128 字步长；测试数据不参与该选择。
+$$
+\mathbf{h}_{i}^{(0)}=\operatorname{Dropout}\!\left(\operatorname{LN}\!\left(E_{\mathrm{tok}}(x_i)+E_{\mathrm{pos}}(i)+E_{\mathrm{seg}}(s_i)\right)\right).
+$$
 
-速度比较中的固定窗口方法将预先规划的窗口按 batch size 1、4、8 或 16 送入模型。串行基线沿用自适应策略：每次输入最多 400 token（最多 398 个正文字符）；若剩余文本更长，则在前 300 个预测位置内提交到最后一个模型预测句号，若该范围内没有句号则提交 300 字；其余文字随后重新预测。窗口边界不使用金标。两种策略使用同一 checkpoint，因而比较反映推理分窗与批处理方式，不是模型结构之间的比较。
+这里，\(\mathbf{h}_{i}^{(0)}\) 是第 \(i\) 个位置经嵌入层处理后的向量，\(E_{\mathrm{tok}}\)、\(E_{\mathrm{pos}}\) 和 \(E_{\mathrm{seg}}\) 分别表示词元、位置和句段嵌入表，\(s_i\) 是句段编号；\(\operatorname{LN}\) 和 \(\operatorname{Dropout}\) 分别表示层归一化和训练期随机失活。本实验将正文 Unicode 字符逐个映射到词表，词表中不存在的字符映射为 [UNK]，全语料中的 [UNK] 占 0.0957%；每个窗口两端加入 [CLS] 和 [SEP]。单句窗口的句段编号均为 0。检查点采用绝对位置嵌入，结构为 12 层、每层 12 个注意力头、隐状态维度 768、前馈维度 3072，最大位置数为 512［3］。训练和常规测试将整段序列限制在 256 个 token，因此每个非重叠窗口最多含 254 个正文字符，每个原始字符只得到一次监督标签并在评估时只计一次预测。
+
+自注意力使一个字符位置能够依据整段窗口内其他可见位置调整表示。令 \(\mathbf{H}\) 为某层输入的隐状态矩阵；本模型是自注意力，故查询、键和值均由 \(\mathbf{H}\) 经不同线性投影得到。第 \(j\) 个头先以缩放点积计算位置间权重，再对值向量加权；多个头拼接后通过输出投影：
+
+$$
+\begin{aligned}
+\operatorname{head}_{j}
+&=\operatorname{softmax}\!\left(\frac{(\mathbf{H}\mathbf{W}_{j}^{Q})(\mathbf{H}\mathbf{W}_{j}^{K})^{\top}}{\sqrt{d_k}}+\mathbf{M}\right)(\mathbf{H}\mathbf{W}_{j}^{V}),\\
+\operatorname{MHA}(\mathbf{H})
+&=\operatorname{Concat}(\operatorname{head}_{1},\ldots,\operatorname{head}_{h})\mathbf{W}^{O}.
+\end{aligned}
+$$
+
+其中，\(\mathbf{W}_{j}^{Q}\)、\(\mathbf{W}_{j}^{K}\) 和 \(\mathbf{W}_{j}^{V}\) 是第 \(j\) 个头的查询、键和值投影矩阵，\(\mathbf{W}^{O}\) 是多头输出投影矩阵，\(h=12\) 是头数，\(d_k=768/12=64\) 是键和查询的维度，\(\mathbf{M}\) 是加性注意力掩码：有效位置取 0，填充位置取足够大的负值以将其注意力概率压至 0。softmax 沿键位置归一化，Concat 表示沿特征维拼接。这里没有因果掩码，字符可利用左右文；除以 \(\sqrt{d_k}\) 用于控制点积随维度增大的尺度，避免注意力分布过度尖锐［5］。
+
+BERT 编码层在注意力子层和逐位置前馈子层后分别执行残差连接与层归一化。对第 \(\ell\) 层，其计算可写为
+
+$$
+\begin{aligned}
+\mathbf{U}^{(\ell)}
+&=\operatorname{LN}\!\left(\mathbf{H}^{(\ell-1)}+\operatorname{Dropout}(\operatorname{MHA}(\mathbf{H}^{(\ell-1)}))\right),\\
+\operatorname{FFN}(\mathbf{U})
+&=\operatorname{GELU}(\mathbf{U}\mathbf{W}_{1}+\mathbf{b}_{1})\mathbf{W}_{2}+\mathbf{b}_{2},\\
+\mathbf{H}^{(\ell)}
+&=\operatorname{LN}\!\left(\mathbf{U}^{(\ell)}+\operatorname{Dropout}(\operatorname{FFN}(\mathbf{U}^{(\ell)}))\right).
+\end{aligned}
+$$
+
+其中，\(\mathbf{H}^{(\ell-1)}\) 和 \(\mathbf{H}^{(\ell)}\) 分别是第 \(\ell\) 层输入与输出的全序列隐状态，\(\mathbf{U}^{(\ell)}\) 是注意力子层输出，\(\operatorname{LN}\) 和 \(\operatorname{Dropout}\) 分别表示层归一化和训练期随机失活，\(\operatorname{GELU}\) 是激活函数；\(\mathbf{W}_{1},\mathbf{W}_{2},\mathbf{b}_{1},\mathbf{b}_{2}\) 是前馈网络参数。该结构在保留输入信息的同时更新各位置表示，逐位置前馈网络则进一步变换特征。经过 12 层后，每个字符的隐状态编码其所在窗口的双向上下文。
+
+### 3.2 逐字符分类与加权交叉熵
+
+标点恢复将每个保留字符位置作为分类对象，预测应在该字符之后插入的标签。类别集合为 \(\mathcal{C}=\{\mathrm{NONE},\text{，},\text{。},\text{？},\text{！},\text{；},\text{：},\text{、}\}\)。记 \(\mathbf{x}\) 为当前输入窗口的词元序列。模型在每个正文位置的最终隐状态上添加线性分类头，得到八类 logits；编码器与新分类头联合微调，并经 softmax 转换为类别概率：
+
+$$
+\mathbf{z}_{i}=\mathbf{W}_{\mathrm{tag}}\operatorname{Dropout}_{0.1}\!\left(\mathbf{h}_{i}^{(12)}\right)+\mathbf{b}_{\mathrm{tag}},\qquad
+p_{\theta}(y_i=c\mid\mathbf{x})=\frac{\exp(z_{i,c})}{\sum_{c'\in\mathcal{C}}\exp(z_{i,c'})},\quad c\in\mathcal{C}.
+$$
+
+其中，\(\mathbf{h}_{i}^{(12)}\) 是第 12 层第 \(i\) 个字符位置的隐状态，\(\operatorname{Dropout}_{0.1}\) 表示训练期间概率为 0.1 的随机失活，在推理时关闭；\(\mathbf{W}_{\mathrm{tag}}\) 和 \(\mathbf{b}_{\mathrm{tag}}\) 是任务分类头参数，\(\mathbf{z}_{i}\) 是该位置的类别 logits，\(z_{i,c}\) 是类别 \(c\) 的 logit，\(y_i\) 是真实标签，\(p_{\theta}\) 是模型预测概率。NONE 表示不插入目标标点。此逐位置分类保持字符与输出标签的对齐，但每个位置只允许选择一个目标类别。
+
+由于 NONE 占多数，训练损失按训练集内七类标点频数加权。设 \(\mathcal{P}=\mathcal{C}\setminus\{\mathrm{NONE}\}\)，\(n_c\) 是训练集中标点类别 \(c\) 的出现次数；NONE 的权重固定为 1，标点类别的权重是七类频数中位数与本类频数之比的平方根，并裁剪到 \([0.5,4.0]\)。对一个小批次 \(\mathcal{B}\)，实现的加权交叉熵为
+
+$$
+\begin{aligned}
+w_{\mathrm{NONE}}&=1,\qquad
+w_c=\min\!\left(4.0,\max\!\left(0.5,\sqrt{\frac{\operatorname{median}_{k\in\mathcal{P}}n_k}{n_c}}\right)\right),\quad c\in\mathcal{P},\\
+\mathcal{L}_{\mathcal{B}}
+&=-\frac{\displaystyle\sum_{(b,i)\in\mathcal{V}_{\mathcal{B}}}w_{y_{b,i}}\log p_{\theta}(y_{b,i}\mid\mathbf{x}_{b})}
+{\displaystyle\sum_{(b,i)\in\mathcal{V}_{\mathcal{B}}}w_{y_{b,i}}}.
+\end{aligned}
+$$
+
+其中，\(\mathcal{B}\) 是当前小批次，\(b\) 索引其中的窗口，\(i\) 索引窗口中的位置，\(\mathcal{V}_{\mathcal{B}}\) 是有效正文标签的位置集合，\(y_{b,i}\) 是位置 \((b,i)\) 的真实类别，\(w_c\) 是类别 \(c\) 的权重，\(\mathcal{L}_{\mathcal{B}}\) 是该批次损失。窗口两端的特殊标记 [CLS]、[SEP] 及批次填充位置不计入损失。批次损失按 \(\mathcal{V}_{\mathcal{B}}\) 中标签权重之和归一化，而非按有效字符数归一化［6］；训练曲线中每轮损失为该轮各批次加权均值的算术平均。类别权重仅由训练集估计，降低了高频标点对目标函数的支配程度；验证集按标点 micro-F1 选择训练轮次。
+
+### 3.3 长文本滑窗与概率融合
+
+长文本推理使用重叠窗口，让单个字符从不同局部上下文获得预测。本文将候选窗口限定为 (256, 128)、(400, 300)、(256, 256) 和 (400, 400)，每对参数依次表示窗口字符数与步长。此处窗口大小按字符而非 token 计数，因此 256 字窗口连同 [CLS] 和 [SEP] 最多占 258 个 token，仍处于检查点 512 个绝对位置嵌入的范围内。窗口规划保证没有未覆盖位置，并在需要时将末窗与文本末端对齐。
+
+令 \(\mathcal{W}_i\) 为覆盖字符位置 \(i\) 的窗口集合。对每个窗口的 logits 去除 [CLS] 位置后计算 softmax 概率，再对重叠位置的概率向量作算术平均，并选择平均概率最大的类别：
+
+$$
+\bar{p}_{i}(c)=\frac{1}{|\mathcal{W}_{i}|}\sum_{w\in\mathcal{W}_{i}}p_{i,w}(c),\qquad
+\hat{y}_{i}=\arg\max_{c\in\mathcal{C}}\bar{p}_{i}(c).
+$$
+
+其中，\(\mathcal{W}_i\) 是覆盖位置 \(i\) 的窗口集合，\(|\mathcal{W}_i|\) 是窗口数量，\(p_{i,w}(c)\) 是窗口 \(w\) 对该位置属于类别 \(c\) 的 softmax 概率，\(\bar p_i(c)\) 是平均概率，\(\hat y_i\) 是最终预测标签。融合对象是概率而不是 logits 或离散标签。根据验证集标点 micro-F1 选出 256 字窗口、128 字步长；测试数据不参与选择。长文测试中的固定窗口再以 batch size 1、4、8 或 16 批量送入同一模型。
+
+速度比较的串行基线沿用自适应策略：每次输入最多 400 token（最多 398 个正文字符）；若剩余文本更长，则在前 300 个预测位置内提交到最后一个模型预测句号，若该范围内没有句号则提交 300 字；其余文字随后重新预测。窗口边界不使用金标。两种策略使用同一 checkpoint，因而比较反映推理分窗与批处理方式，而非模型结构差异。
 
 ## 4. 实验设置
 
@@ -171,6 +243,10 @@
 ［3］Google. bert-base-chinese model card. Hugging Face. https://huggingface.co/google-bert/bert-base-chinese
 
 ［4］维基文库：《论语/学而第一》。https://zh.wikisource.org/zh-hans/%E8%AB%96%E8%AA%9E/%E5%AD%B8%E8%80%8C%E7%AC%AC%E4%B8%80
+
+［5］Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. 2017. Attention Is All You Need. Advances in Neural Information Processing Systems 30. https://arxiv.org/abs/1706.03762
+
+［6］PyTorch Contributors. torch.nn.CrossEntropyLoss. PyTorch documentation. https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html
 
 ## 复现材料
 
