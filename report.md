@@ -4,6 +4,8 @@
 
 本文研究中文新闻标点恢复的类别差异，以及长文本滑窗推理的效率与质量取舍。实验从 1998 年 1 月《人民日报》构造 2,779 篇文章、1,574,260 个字符位置的数据，按文章划分训练、验证和测试集，在 bert-base-chinese 上微调包含七类标点与 NONE 的逐字符分类模型。279 篇文章的留出测试取得标点 micro-F1 0.76771、macro-F1 0.61823；类别混淆表明，低频标点及停顿边界是主要误差来源。长文推理采用验证集选择的 256 字窗口、128 字步长，对重叠区域融合类别概率。在 60 篇长文测试子集上，batch size 16 的固定窗口端到端吞吐为 30,714 字符位置/秒，是串行自适应窗口的 2.72 倍；两者标点 micro-F1 分别为 0.76705 和 0.76580。结果表明，批量重叠滑窗在保持接近的聚合预测质量时能够提高处理效率，而具体位置的标点选择仍随窗口策略变化。
 
+**代码仓库：[https://github.com/stq1234/LLMandAppliedPractices-BERT-Punctuation](https://github.com/stq1234/LLMandAppliedPractices-BERT-Punctuation)。本次实验的代码及相关说明可在该仓库中获取。**
+
 ## 1. 引言
 
 标点恢复要根据没有标点的文本序列推断停顿、分句及语气边界。将每个字符视为一个位置并预测其后是否附加标点，可以将任务写成序列标注问题。双向 Transformer 预训练模型 BERT 能在各层联合利用左右文脉，并可通过任务分类头进行微调［1］。相关工作已将基于 BERT 的方法用于噪声语音转写文本，并研究利用外部文本数据改善域内标点恢复［2］。本文将这一建模思路用于中文新闻，重点考察类别不均衡和长文本分窗带来的影响。
@@ -250,4 +252,4 @@ $$
 
 ## 复现材料
 
-环境依赖与运行命令见仓库 README。**本次实验的代码及相关说明可在该仓库中获取：**[LLMandAppliedPractices-BERT-Punctuation](https://github.com/stq1234/LLMandAppliedPractices-BERT-Punctuation)。
+环境依赖与运行命令见仓库 README。**本次实验的代码及相关说明可在该仓库中获取：**[https://github.com/stq1234/LLMandAppliedPractices-BERT-Punctuation](https://github.com/stq1234/LLMandAppliedPractices-BERT-Punctuation)。
